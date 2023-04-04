@@ -4,31 +4,33 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.dentistreservation.model.DokterGigi
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObjects
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class MemilihDokterVM : ViewModel() {
-    private val firestoreDb = Firebase.firestore
-    private val dokterCollectionRef = firestoreDb.collection("doktergigi")
+    private val db = Firebase.firestore
 
-    fun getDokter() : LiveData<List<DokterGigi>>{
-        val dokterLiveData = MutableLiveData<List<DokterGigi>>()
+    private val _dokterList = MutableStateFlow<List<DokterGigi>>(emptyList())
+    val dokterList: StateFlow<List<DokterGigi>> = _dokterList
 
-        dokterCollectionRef.addSnapshotListener{snapshot, error ->
-            val dokterList = mutableListOf<DokterGigi>()
-            if (error != null){
-                Log.e("error", "Listen failed: $error")
-                return@addSnapshotListener
+    init {
+        viewModelScope.launch {
+            try {
+                val snapshot = db.collection("dokter")
+                    .get().await()
+
+                val dokterList = snapshot.toObjects<DokterGigi>()
+                _dokterList.value = dokterList
+            } catch (e: Exception) {
+                Log.e("DokterViewModel", "Error getting dokter", e)
             }
-
-            for (doc in snapshot?.documents!!){
-                val dokterGigi = doc.toObject(DokterGigi::class.java)
-                dokterList.add(dokterGigi!!)
-            }
-            dokterLiveData.value = dokterList
         }
-
-        return dokterLiveData
     }
 }

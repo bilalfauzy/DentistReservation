@@ -1,4 +1,7 @@
 package com.example.dentistreservation.viewmodel.reservasi
 
-class MemilihTanggalVM {
+import androidx.lifecycle.ViewModel
+
+class MemilihTanggalVM : ViewModel(){
+
 }

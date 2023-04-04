@@ -9,7 +9,8 @@ data class DokterGigi(
     var nama: String? = null,
     var gender: String? = null,
     var spesialis: String? = null,
-    var umur: String? = null
+    var umur: String? = null,
+    var jadwal: Map<String, List<String>>? = null
 ){
     @Exclude
     fun toMap():Map<String, Any?>{
@@ -18,7 +19,8 @@ data class DokterGigi(
             "nama" to nama,
             "gender" to gender,
             "spesialis" to spesialis,
-            "umur" to umur
+            "umur" to umur,
+            "jadwal" to jadwal
         )
     }
 }
