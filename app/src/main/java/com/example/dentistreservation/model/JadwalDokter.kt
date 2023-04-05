@@ -4,21 +4,21 @@ import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.IgnoreExtraProperties
 
 @IgnoreExtraProperties
-data class DokterGigi(
+data class JadwalDokter(
     var id: String? = null,
-    var nama: String? = null,
-    var gender: String? = null,
-    var spesialis: String? = null,
-    var umur: String? = null
+    var tanggal: String? = null,
+    var hari: String? = null,
+    var jam: String? = null,
+    var status: String? = null
 ){
     @Exclude
     fun toMap():Map<String, Any?>{
         return mapOf(
             "id" to id,
-            "nama" to nama,
-            "gender" to gender,
-            "spesialis" to spesialis,
-            "umur" to umur
+            "tanggal" to tanggal,
+            "hari" to hari,
+            "jam" to jam,
+            "status" to status
         )
     }
 }

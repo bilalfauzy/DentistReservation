@@ -7,27 +7,31 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.DateRange
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.navArgument
 import com.example.dentistreservation.model.DokterGigi
+import com.example.dentistreservation.model.JadwalDokter
 import com.example.dentistreservation.routes.Screen
 import com.example.dentistreservation.view.MyAppBar
+import com.example.dentistreservation.viewmodel.reservasi.MemilihDokterVM
 import com.example.dentistreservation.viewmodel.reservasi.MemilihTanggalVM
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -39,6 +43,7 @@ import java.util.Calendar
 fun MemilihTanggal(
     navController: NavHostController,
     memilihTanggalVM: MemilihTanggalVM,
+    memilihDokterVM: MemilihDokterVM,
     idDok: String,
     namaDok: String,
     genderDok: String,
@@ -48,6 +53,22 @@ fun MemilihTanggal(
     val selectedDate = remember {
         mutableStateOf(LocalDate.now())
     }
+
+    val selectedDokter = remember {
+        mutableStateOf("")
+    }
+
+    var mExpanded = remember {
+        mutableStateOf(false)
+    }
+
+    val icon  = if (mExpanded.value){
+        Icons.Filled.KeyboardArrowUp
+    }else{
+        Icons.Filled.KeyboardArrowDown
+    }
+
+
     val keluhan = remember {
         mutableStateOf("")
     }
@@ -61,6 +82,9 @@ fun MemilihTanggal(
             spesialis = spesialis,
             umur = umurDok
         )
+    }
+    val jadwal = remember {
+        JadwalDokter()
     }
 
     Column() {
@@ -78,7 +102,22 @@ fun MemilihTanggal(
                 .fillMaxSize()
                 .padding(40.dp)
         ) {
-            Text(text = "Nama dokter gigi")
+            Card(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth(),
+                elevation = 4.dp,
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(text = "ID : ${dokter.id}")
+                    Text(text = "Nama : ${dokter.nama}")
+                    Text(text = "Gender : ${dokter.gender}")
+                    Text(text = "Spesialis : ${dokter.spesialis}")
+                    Text(text = "Umur : ${dokter.umur}")
+                }
+            }
+
             Text(text = "Pilih tanggal")
 
             Row(
@@ -86,10 +125,10 @@ fun MemilihTanggal(
             ) {
                 OutlinedTextField(
                     modifier = Modifier.weight(1f),
-                    value = selectedDate.value.format(
-                        DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
-                    ),
-                    onValueChange = {},
+                    value = selectedDate.value.toString(),
+                    onValueChange = {
+                        selectedDate.value = LocalDate.parse(it)
+                    },
                     readOnly = true,
                     trailingIcon = {
                         IconButton(
@@ -117,6 +156,42 @@ fun MemilihTanggal(
                 )
             }
 
+            if (selectedDate.value.toString().isNotEmpty()){
+                
+                val dokterList by memilihTanggalVM.dokterByDate(selectedDate.value.toString()).collectAsState(
+                    initial = emptyList()
+                )
+                //pilih daftar dokter
+                OutlinedTextField(
+                    value = selectedDokter.value,
+                    onValueChange = { selectedDokter.value = it },
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    label = {Text("Pilih dokter")},
+                    trailingIcon = {
+                        Icon(icon,"contentDescription",
+                            Modifier.clickable { mExpanded.value = true })
+                    }
+                )
+
+                DropdownMenu(
+                    expanded = mExpanded.value,
+                    onDismissRequest = { mExpanded.value = false }
+                ) {
+                    dokterList.forEach {
+                        DropdownMenuItem(onClick = {
+                            selectedDokter.value = it.nama.toString()
+                            mExpanded.value = false
+                        }){
+                            Text(text = "${it.nama.toString()}")
+                        }
+                    }
+                }
+            }
+
+
+
+            //isi keluhan
             OutlinedTextField(
                 value = keluhan.value,
                 onValueChange = {
@@ -128,28 +203,37 @@ fun MemilihTanggal(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Card(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                elevation = 4.dp,
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(text = "ID : ${dokter.id}")
-                    Text(text = "Nama : ${dokter.nama}")
-                    Text(text = "Gender : ${dokter.gender}")
-                    Text(text = "Spesialis : ${dokter.spesialis}")
-                    Text(text = "Umur : ${dokter.umur}")
-                }
-            }
-
             Button(
                 onClick = {
                     navController.navigate(Screen.MelakukanPembayaranScreen.route)
                 }
             ) {
                 Text(text = "Pilih")
+            }
+        }
+    }
+}
+
+@Composable
+fun ListDokter(
+    dokterList : List<DokterGigi>,
+    dokter: DokterGigi,
+    onItemClick: (DokterGigi) -> Unit
+){
+    LazyColumn(){
+        items(dokterList){ dokter ->
+            Card(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+                    .clickable { onItemClick(dokter) },
+                elevation = 4.dp,
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(text = "Nama : ${dokter.nama}")
+                    Text(text = "Spesialis : ${dokter.spesialis}")
+                }
             }
         }
     }

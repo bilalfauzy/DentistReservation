@@ -53,10 +53,18 @@ fun Home(
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    navController.navigate(Screen.ProfileScreen.route)
+                    navController.navigate(Screen.CreateDokterScreen.route)
                 }
             ) {
-                Text(text = "Profile")
+                Text(text = "Tambah dokter")
+            }
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    navController.navigate(Screen.CreateJadwalScreen.route)
+                }
+            ) {
+                Text(text = "Tambah jadwal")
             }
         }
     }

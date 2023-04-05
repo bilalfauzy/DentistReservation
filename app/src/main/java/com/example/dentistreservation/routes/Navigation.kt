@@ -1,11 +1,16 @@
 package com.example.dentistreservation.routes
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.dentistreservation.admin.view.CreateDokter
+import com.example.dentistreservation.admin.view.CreateJadwal
+import com.example.dentistreservation.admin.viewmodel.CreateDokterVM
 import com.example.dentistreservation.view.dashboard.Home
 import com.example.dentistreservation.view.dashboard.ListReservasi
 import com.example.dentistreservation.view.dashboard.Profile
@@ -20,6 +25,7 @@ import com.example.dentistreservation.viewmodel.loginregister.RegisterViewModel
 import com.example.dentistreservation.viewmodel.reservasi.MemilihDokterVM
 import com.example.dentistreservation.viewmodel.reservasi.MemilihTanggalVM
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Navigation(){
     val navController = rememberNavController()
@@ -78,6 +84,7 @@ fun Navigation(){
             MemilihTanggal(
                 navController = navController,
                 memilihTanggalVM = MemilihTanggalVM(),
+                memilihDokterVM = MemilihDokterVM(),
                 idDok = id,
                 namaDok = nama,
                 genderDok = gender,
@@ -92,6 +99,14 @@ fun Navigation(){
 
         composable(route = Screen.BerhasilMembayarScreen.route){
             BerhasilMembayar()
+        }
+
+        composable(route = Screen.CreateDokterScreen.route){
+            CreateDokter(createDokterVM = CreateDokterVM())
+        }
+
+        composable(route = Screen.CreateJadwalScreen.route){
+            CreateJadwal()
         }
     }
 }
