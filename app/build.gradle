@@ -70,5 +70,7 @@ dependencies {
 
     //firestore
     implementation 'com.google.firebase:firebase-firestore-ktx'
+    //volley
+    implementation("com.android.volley:volley:1.2.1")
 
 }

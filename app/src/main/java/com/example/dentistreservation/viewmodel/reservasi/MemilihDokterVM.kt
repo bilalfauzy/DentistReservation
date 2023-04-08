@@ -19,13 +19,19 @@ class MemilihDokterVM : ViewModel() {
 
     private val _dokterList = MutableStateFlow<List<DokterGigi>>(emptyList())
     val dokterList: StateFlow<List<DokterGigi>> = _dokterList
+    private val _listId = MutableStateFlow<List<String>>(emptyList())
+    val listId: StateFlow<List<String>> = _listId
 
     init {
         viewModelScope.launch {
             try {
                 val snapshot = db.collection("dokter")
                     .get().await()
-
+                for (doc in snapshot.documents) {
+                    val idDokter = doc.id
+                    _listId.value = listOf(idDokter)
+                    Log.e("ID", "${_listId}")
+                }
                 val dokterList = snapshot.toObjects<DokterGigi>()
                 _dokterList.value = dokterList
             } catch (e: Exception) {
@@ -33,4 +39,5 @@ class MemilihDokterVM : ViewModel() {
             }
         }
     }
+
 }

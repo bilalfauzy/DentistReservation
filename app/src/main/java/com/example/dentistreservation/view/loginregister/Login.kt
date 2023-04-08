@@ -91,6 +91,7 @@ fun Login(
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
+
                 loginViewModel.onLoginClick(
                     navController,
                     email.value,

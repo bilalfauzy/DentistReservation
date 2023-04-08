@@ -3,14 +3,18 @@ package com.example.dentistreservation.routes
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.dentistreservation.admin.view.AdminHome
 import com.example.dentistreservation.admin.view.CreateDokter
 import com.example.dentistreservation.admin.view.CreateJadwal
 import com.example.dentistreservation.admin.viewmodel.CreateDokterVM
+import com.example.dentistreservation.admin.viewmodel.CreateJadwalVM
+import com.example.dentistreservation.payment.DokuPayment
 import com.example.dentistreservation.view.dashboard.Home
 import com.example.dentistreservation.view.dashboard.ListReservasi
 import com.example.dentistreservation.view.dashboard.Profile
@@ -22,6 +26,7 @@ import com.example.dentistreservation.view.reservasi.MemilihDokter
 import com.example.dentistreservation.view.reservasi.MemilihTanggal
 import com.example.dentistreservation.viewmodel.loginregister.LoginViewModel
 import com.example.dentistreservation.viewmodel.loginregister.RegisterViewModel
+import com.example.dentistreservation.viewmodel.reservasi.MelakukanPembayaranVM
 import com.example.dentistreservation.viewmodel.reservasi.MemilihDokterVM
 import com.example.dentistreservation.viewmodel.reservasi.MemilihTanggalVM
 
@@ -29,6 +34,7 @@ import com.example.dentistreservation.viewmodel.reservasi.MemilihTanggalVM
 @Composable
 fun Navigation(){
     val navController = rememberNavController()
+
     NavHost(navController = navController, startDestination = Screen.LoginScreen.route){
         composable(route = Screen.LoginScreen.route){
             Login(navController = navController, loginViewModel = LoginViewModel())
@@ -57,44 +63,48 @@ fun Navigation(){
         }
 
         composable(
-            route = Screen.MemilihTanggalScreen.route + "/{id}/{nama}/{gender}/{spesialis}/{umur}",
+            route = Screen.MemilihTanggalScreen.route
+        ){
+            MemilihTanggal(
+                navController = navController,
+                memilihTanggalVM = MemilihTanggalVM(),
+                memilihDokterVM = MemilihDokterVM()
+            )
+        }
+
+        composable(route = Screen.MelakukanPembayaranScreen.route + "/{nama}/{tanggal}/{hari}/{jam}/{keluhan}",
             arguments = listOf(
-                navArgument("id"){
-                    type = NavType.StringType
-                },
                 navArgument("nama"){
                     type = NavType.StringType
                 },
-                navArgument("gender"){
+                navArgument("tanggal"){
                     type = NavType.StringType
                 },
-                navArgument("spesialis"){
+                navArgument("hari"){
                     type = NavType.StringType
                 },
-                navArgument("umur"){
+                navArgument("jam"){
+                    type = NavType.StringType
+                },
+                navArgument("keluhan"){
                     type = NavType.StringType
                 }
             )
         ){
-            val id = it.arguments?.getString("id")!!
             val nama = it.arguments?.getString("nama")!!
-            val gender = it.arguments?.getString("gender")!!
-            val spesialis = it.arguments?.getString("spesialis")!!
-            val umur = it.arguments?.getString("umur")!!
-            MemilihTanggal(
+            val tanggal = it.arguments?.getString("tanggal")!!
+            val hari = it.arguments?.getString("hari")!!
+            val jam = it.arguments?.getString("jam")!!
+            val keluhan = it.arguments?.getString("keluhan")!!
+            MelakukanPembayaran(
                 navController = navController,
-                memilihTanggalVM = MemilihTanggalVM(),
-                memilihDokterVM = MemilihDokterVM(),
-                idDok = id,
+                melakukanPembayaranVM = MelakukanPembayaranVM(),
                 namaDok = nama,
-                genderDok = gender,
-                spesialis = spesialis,
-                umurDok = umur
+                tanggal = tanggal,
+                hari = hari,
+                jam = jam,
+                keluhan = keluhan
             )
-        }
-
-        composable(route = Screen.MelakukanPembayaranScreen.route){
-            MelakukanPembayaran()
         }
 
         composable(route = Screen.BerhasilMembayarScreen.route){
@@ -105,8 +115,18 @@ fun Navigation(){
             CreateDokter(createDokterVM = CreateDokterVM())
         }
 
-        composable(route = Screen.CreateJadwalScreen.route){
-            CreateJadwal()
+        composable(
+            route = Screen.CreateJadwalScreen.route
+        ){
+            CreateJadwal(
+                createJadwalVM = CreateJadwalVM(),
+                memilihDokterVM = MemilihDokterVM()
+            )
+        }
+        
+        //admin
+        composable(route = Screen.AdminHomeScreen.route){
+            AdminHome(navController = navController)
         }
     }
 }

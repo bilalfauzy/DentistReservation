@@ -1,4 +1,5 @@
-package com.example.dentistreservation.view.dashboard
+package com.example.dentistreservation.admin.view
+
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -7,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
@@ -19,7 +19,7 @@ import com.example.dentistreservation.routes.Screen
 import com.example.dentistreservation.view.MyAppBar
 
 @Composable
-fun Home(
+fun AdminHome(
     navController: NavHostController
 ){
     Column() {
@@ -38,35 +38,19 @@ fun Home(
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    navController.navigate(Screen.MemilihTanggalScreen.route)
+                    navController.navigate(Screen.CreateDokterScreen.route)
                 }
             ) {
-                Text(text = "Buat reservasi baru")
+                Text(text = "Tambah dokter")
             }
-//            Button(
-//                modifier = Modifier.fillMaxWidth(),
-//                onClick = {
-//                    navController.navigate(Screen.ListReservasiScreen.route)
-//                }
-//            ) {
-//                Text(text = "List Reservasi")
-//            }
-//            Button(
-//                modifier = Modifier.fillMaxWidth(),
-//                onClick = {
-//                    navController.navigate(Screen.CreateDokterScreen.route)
-//                }
-//            ) {
-//                Text(text = "Tambah dokter")
-//            }
-//            Button(
-//                modifier = Modifier.fillMaxWidth(),
-//                onClick = {
-//                    navController.navigate(Screen.CreateJadwalScreen.route)
-//                }
-//            ) {
-//                Text(text = "Tambah jadwal")
-//            }
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    navController.navigate(Screen.CreateJadwalScreen.route)
+                }
+            ) {
+                Text(text = "Tambah jadwal")
+            }
         }
     }
 }

@@ -4,7 +4,6 @@ import android.app.DatePickerDialog
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,26 +11,19 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.toSize
 import com.example.dentistreservation.admin.viewmodel.CreateDokterVM
 import com.example.dentistreservation.model.DokterGigi
 import com.example.dentistreservation.model.JadwalDokter
-import com.example.dentistreservation.routes.Screen
+import com.example.dentistreservation.view.CustomExposedDropdown
 import com.example.dentistreservation.view.MyAppBar
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import java.util.*
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -44,11 +36,11 @@ fun CreateDokter(createDokterVM: CreateDokterVM){
         mutableStateOf("")
     }
     val gender = remember {
-        mutableStateOf("")
+        mutableStateOf<String?>(null)
     }
     val listGender = listOf(
         "Laki - laki",
-        "Perempuan"
+        "Perempuan",
     )
     val spesialis = remember {
         mutableStateOf("")
@@ -61,7 +53,7 @@ fun CreateDokter(createDokterVM: CreateDokterVM){
         mutableStateOf("")
     }
     val hari = remember {
-        mutableStateOf("")
+        mutableStateOf<String?>(null)
     }
     val listHari = listOf(
         "Senin",
@@ -73,7 +65,7 @@ fun CreateDokter(createDokterVM: CreateDokterVM){
     )
 
     val jam = remember {
-        mutableStateOf("")
+        mutableStateOf<String?>(null)
     }
     val listJam = listOf(
         "08.00",
@@ -83,26 +75,12 @@ fun CreateDokter(createDokterVM: CreateDokterVM){
     )
 
     val status = remember {
-        mutableStateOf("")
+        mutableStateOf<String?>(null)
     }
     val listStatus = listOf(
         "Tersedia",
         "Kosong"
     )
-
-    var mTextFieldSize = remember {
-        mutableStateOf(Size.Zero)
-    }
-
-    var mExpanded = remember {
-        mutableStateOf(false)
-    }
-
-    val icon  = if (mExpanded.value){
-        Icons.Filled.KeyboardArrowUp
-    }else{
-        Icons.Filled.KeyboardArrowDown
-    }
 
     val selectedDate = remember {
         mutableStateOf(LocalDate.now())
@@ -110,7 +88,7 @@ fun CreateDokter(createDokterVM: CreateDokterVM){
 
     val context = LocalContext.current
 
-    Column() {
+    Column {
         MyAppBar(
             title = "Menambah dokter",
             navigationIcon = Icons.Filled.ArrowBack,
@@ -143,37 +121,9 @@ fun CreateDokter(createDokterVM: CreateDokterVM){
         )
 
         //gender dokter
-        OutlinedTextField(
-            value = gender.value,
-            onValueChange = {
-                gender.value = it
-            },
-            label = {
-                Text("Gender")
-            },
-            modifier = Modifier.fillMaxWidth()
-                .onGloballyPositioned {
-                    mTextFieldSize.value = it.size.toSize()
-                },
-            trailingIcon = {
-                Icon(icon,"contentDescription",
-                    Modifier.clickable { mExpanded.value = true })
-            }
-        )
-        DropdownMenu(
-            expanded = mExpanded.value,
-            onDismissRequest = { mExpanded.value = false }
-        ) {
-            listGender.forEach {
-                DropdownMenuItem(onClick = {
-                    gender.value = it
-                    mExpanded.value = false
-                }){
-                    Text(text = "${it}")
-                }
-            }
-        }
-
+        CustomExposedDropdown(options = listGender, label = "Pilih gender", onOptionSelected = {
+            gender.value = it
+        }, selectedOption = gender.value)
 
         OutlinedTextField(
             value = spesialis.value,
@@ -200,7 +150,7 @@ fun CreateDokter(createDokterVM: CreateDokterVM){
         if (
             idDok.value.isNotEmpty()
             && nama.value.isNotEmpty()
-            && gender.value.isNotEmpty()
+            && gender.value!!.isNotEmpty()
             && spesialis.value.isNotEmpty()
             && umur.value.isNotEmpty()
         ){
@@ -236,7 +186,7 @@ fun CreateDokter(createDokterVM: CreateDokterVM){
 
                                 val datepicker = DatePickerDialog(
                                     context,
-                                    { view, year, month, dayOfMonth ->
+                                    { _, year, month, dayOfMonth ->
                                         selectedDate.value = LocalDate.of(year, month +1, dayOfMonth)
                                     },
                                     year, month, day
@@ -253,100 +203,20 @@ fun CreateDokter(createDokterVM: CreateDokterVM){
             }
 
             //hari
-            OutlinedTextField(
-                value = hari.value,
-                onValueChange = {
-                    hari.value = it
-                },
-                label = {
-                    Text("Hari kerja")
-                },
-                modifier = Modifier.fillMaxWidth()
-                    .onGloballyPositioned {
-                        mTextFieldSize.value = it.size.toSize()
-                    },
-                trailingIcon = {
-                    Icon(icon,"contentDescription",
-                        Modifier.clickable { mExpanded.value = true })
-                }
-            )
-            DropdownMenu(
-                expanded = mExpanded.value,
-                onDismissRequest = { mExpanded.value = false }
-            ) {
-                listHari.forEach {
-                    DropdownMenuItem(onClick = {
-                        hari.value = it
-                        mExpanded.value = false
-                    }){
-                        Text(text = "${it}")
-                    }
-                }
-            }
+            CustomExposedDropdown(options = listHari, label = "Pilih hari", onOptionSelected = {
+                hari.value = it
+            }, selectedOption = hari.value)
+
 
             //jam
-            OutlinedTextField(
-                value = jam.value,
-                onValueChange = {
-                    jam.value = it
-                },
-                label = {
-                    Text("jam kerja")
-                },
-                modifier = Modifier.fillMaxWidth()
-                    .onGloballyPositioned {
-                        mTextFieldSize.value = it.size.toSize()
-                    },
-                trailingIcon = {
-                    Icon(icon,"contentDescription",
-                        Modifier.clickable { mExpanded.value = true })
-                }
-            )
-            DropdownMenu(
-                expanded = mExpanded.value,
-                onDismissRequest = { mExpanded.value = false }
-            ) {
-                listJam.forEach {
-                    DropdownMenuItem(onClick = {
-                        jam.value = it
-                        mExpanded.value = false
-                    }){
-                        Text(text = "${it}")
-                    }
-                }
-            }
+            CustomExposedDropdown(options = listJam, label = "Pilih jam", onOptionSelected = {
+                jam.value = it
+            }, selectedOption = jam.value)
 
             //status
-            OutlinedTextField(
-                value = status.value,
-                onValueChange = {
-                    status.value = it
-                },
-                label = {
-                    Text("Status")
-                },
-                modifier = Modifier.fillMaxWidth()
-                    .onGloballyPositioned {
-                        mTextFieldSize.value = it.size.toSize()
-                    },
-                trailingIcon = {
-                    Icon(icon,"contentDescription",
-                        Modifier.clickable { mExpanded.value = true })
-                }
-            )
-            DropdownMenu(
-                expanded = mExpanded.value,
-                onDismissRequest = { mExpanded.value = false }
-            ) {
-                listStatus.forEach {
-                    DropdownMenuItem(onClick = {
-                        status.value = it
-                        mExpanded.value = false
-                    }){
-                        Text(text = "${it}")
-                    }
-                }
-            }
+            CustomExposedDropdown(options = listStatus, label = "Status", onOptionSelected = {
+                status.value = it
+            }, selectedOption = status.value)
 
         }
 

@@ -33,7 +33,11 @@ class LoginViewModel : ViewModel() {
             .addOnCompleteListener {
                 if (it.isSuccessful){
                     _loginState.value = LoginState.Success(firebaseAuth.currentUser)
-                    navController.navigate(Screen.HomeScreen.route)
+                    if (email == "admin@gmail.com" && password == "admin123"){
+                        navController.navigate(Screen.AdminHomeScreen.route)
+                    }else{
+                        navController.navigate(Screen.HomeScreen.route)
+                    }
                 }else{
                     _loginState.value = LoginState.Error(it.exception?.message)
                 }

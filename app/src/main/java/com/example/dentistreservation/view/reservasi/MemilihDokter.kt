@@ -40,7 +40,7 @@ fun MyListDokter(dokterList : List<DokterGigi>, navController: NavHostController
     LazyColumn(){
         items(dokterList){ dokter ->
             DokterItems(dokter = dokter, onItemClick = {
-                navController.navigate(Screen.MemilihTanggalScreen.route +
+                navController.navigate(Screen.CreateJadwalScreen.route +
                         "/${it.id}/${it.nama}/${it.gender}/${it.spesialis}/${it.umur}")
             })
         }

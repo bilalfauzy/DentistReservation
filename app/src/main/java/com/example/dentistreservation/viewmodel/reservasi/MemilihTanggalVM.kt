@@ -32,12 +32,13 @@ class MemilihTanggalVM : ViewModel(){
     val dokters: StateFlow<List<DokterGigi>> get() = _dokters
 
 
-    fun dokterByDate(date: String): Flow<List<DokterGigi>>{
+    fun dokterByDate(date: String, jam: String): Flow<List<DokterGigi>>{
 
         return callbackFlow {
             val availableDokter = mutableListOf<DokterGigi>()
             db.collectionGroup("jadwal")
                 .whereEqualTo("tanggal", date)
+                .whereEqualTo("jam", jam)
                 .get()
                 .addOnSuccessListener {
                     val availableDokterId = mutableSetOf<String>()
@@ -75,6 +76,8 @@ class MemilihTanggalVM : ViewModel(){
         }
 
     }
+
+
     init {
         viewModelScope.launch {
             try {

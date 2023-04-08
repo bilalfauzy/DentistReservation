@@ -15,12 +15,6 @@ import kotlinx.coroutines.tasks.await
 class CreateDokterVM : ViewModel(){
     private val db = Firebase.firestore
 
-//    private val _dokter = MutableLiveData<List<DokterGigi>>()
-//    val dokter: LiveData<List<DokterGigi>> = _dokter
-//
-//    private val _jadwal = MutableLiveData<List<JadwalDokter>>()
-//    val jadwal: LiveData<List<JadwalDokter>> = _jadwal
-
     fun createDokter(dokterGigi: DokterGigi, jadwalDokter: JadwalDokter){
         viewModelScope.launch(Dispatchers.IO){
             db.collection("dokter").document(dokterGigi.id!!)
@@ -33,13 +27,4 @@ class CreateDokterVM : ViewModel(){
                 .await()
         }
     }
-
-    fun createJadwal(jadwalDokter: JadwalDokter){
-        viewModelScope.launch(Dispatchers.IO){
-            db.collection("jadwal")
-                .add(jadwalDokter)
-                .await()
-        }
-    }
-
 }
