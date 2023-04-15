@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.dentistreservation.routes.Screen
-import com.example.dentistreservation.view.MyAppBar
+import com.example.dentistreservation.view.customcomponent.MyAppBar
 
 @Composable
 fun AdminHome(

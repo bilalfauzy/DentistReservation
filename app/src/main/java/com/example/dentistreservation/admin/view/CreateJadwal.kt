@@ -18,8 +18,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.example.dentistreservation.admin.viewmodel.CreateJadwalVM
 import com.example.dentistreservation.model.JadwalDokter
-import com.example.dentistreservation.view.CustomExposedDropdown
-import com.example.dentistreservation.view.MyAppBar
+import com.example.dentistreservation.view.customcomponent.CustomExposedDropdown
+import com.example.dentistreservation.view.customcomponent.MyAppBar
 import com.example.dentistreservation.viewmodel.reservasi.MemilihDokterVM
 import java.time.LocalDate
 import java.util.*

@@ -16,8 +16,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.dentistreservation.routes.Screen
-import com.example.dentistreservation.view.CustomExposedDropdown
-import com.example.dentistreservation.view.MyAppBar
+import com.example.dentistreservation.ui.theme.backColor
+import com.example.dentistreservation.ui.theme.baseColor
+import com.example.dentistreservation.view.customcomponent.CustomExposedDropdown
+import com.example.dentistreservation.view.customcomponent.MyAppBar
 import com.example.dentistreservation.viewmodel.reservasi.MemilihDokterVM
 import com.example.dentistreservation.viewmodel.reservasi.MemilihTanggalVM
 import java.time.LocalDate
@@ -67,7 +69,7 @@ fun MemilihTanggal(
 
         Column(
             modifier = Modifier
-                .background(Color.White)
+                .background(backColor)
                 .fillMaxSize()
                 .padding(40.dp)
         ) {
@@ -109,6 +111,7 @@ fun MemilihTanggal(
                 )
             }
 
+            Divider()
             CustomExposedDropdown(options = listJam, label = "Pilih waktu", onOptionSelected = {
                 jam.value = it
             }, selectedOption = jam.value)
@@ -132,7 +135,7 @@ fun MemilihTanggal(
                 }
             }
 
-
+            Divider()
             //isi keluhan
             OutlinedTextField(
                 value = keluhan.value,
@@ -145,6 +148,7 @@ fun MemilihTanggal(
                 modifier = Modifier.fillMaxWidth()
             )
 
+            Divider()
             Button(
                 onClick = {
                     navController.navigate(Screen.MelakukanPembayaranScreen.route+

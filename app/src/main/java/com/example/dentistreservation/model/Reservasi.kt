@@ -21,7 +21,7 @@ data class Reservasi(
             "tanggalReservasi" to tanggalRes,
             "keluhan" to keluhan,
             "biaya" to biaya,
-            "tanggalCreate" to tanggalCreate,
+            "tanggalCreate" to tanggalCreate
         )
     }
 }

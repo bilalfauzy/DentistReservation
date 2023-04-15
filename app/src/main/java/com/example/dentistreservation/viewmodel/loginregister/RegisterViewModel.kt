@@ -9,13 +9,18 @@ import com.example.dentistreservation.routes.Screen
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import java.util.UUID
 
 class RegisterViewModel : ViewModel() {
     private val auth = FirebaseAuth.getInstance()
 
+    val idUser = mutableStateOf(
+        UUID.randomUUID().toString()
+    )
     val nama = mutableStateOf("")
     val umur = mutableStateOf("")
-    val gender = mutableStateOf("")
+    val gender = mutableStateOf<String?>(null)
+    val noWa = mutableStateOf("")
     val email = mutableStateOf("")
     val password = mutableStateOf("")
     val confirmPassword = mutableStateOf("")
@@ -32,6 +37,10 @@ class RegisterViewModel : ViewModel() {
     fun onGenderChange(gender: String){
         this.gender.value = gender
     }
+
+    fun onNomorChange(noWa: String){
+        this.noWa.value = noWa
+    }
     fun onEmailChange(email: String){
         this.email.value = email
     }
@@ -43,9 +52,11 @@ class RegisterViewModel : ViewModel() {
     }
 
     fun onRegisterClick(navController: NavHostController){
+        val idUser = idUser.value
         val nama = nama.value
         val umur = umur.value.toIntOrNull()
         val gender = gender.value
+        val noWa = noWa.value
         val email = email.value
         val password = password.value
 
@@ -55,10 +66,11 @@ class RegisterViewModel : ViewModel() {
                 .addOnCompleteListener {
                     if (it.isSuccessful){
                         val user = Users(
-                            nama, umur!!, gender, email, password
+                            idUser, nama, umur!!, gender, noWa, email, password
                         )
                         Firebase.firestore.collection("users")
-                            .add(user)
+                            .document(user.idUser!!)
+                            .set(user)
                             .addOnSuccessListener {
                                 isLoading.value = false
                                 //navController.navigate("login")
@@ -79,8 +91,8 @@ class RegisterViewModel : ViewModel() {
     }
 
     private fun isFormValid() : Boolean {
-        if (nama.value.isEmpty() || umur.value == null || gender.value.isEmpty() || email.value.isEmpty() ||
-            password.value.isEmpty() || confirmPassword.value.isEmpty()
+        if (nama.value.isEmpty() || umur.value == null || gender.value!!.isEmpty() || email.value.isEmpty() ||
+            password.value.isEmpty() || confirmPassword.value.isEmpty() || noWa.value.isEmpty()
         ){
             error.value = "Silahkan diisi.."
             return false
@@ -95,6 +107,7 @@ class RegisterViewModel : ViewModel() {
         nama.value = ""
         umur.value = ""
         gender.value = ""
+        noWa.value = ""
         email.value = ""
         password.value = ""
         confirmPassword.value = ""

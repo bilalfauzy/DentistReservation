@@ -3,7 +3,6 @@ package com.example.dentistreservation.routes
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -14,7 +13,6 @@ import com.example.dentistreservation.admin.view.CreateDokter
 import com.example.dentistreservation.admin.view.CreateJadwal
 import com.example.dentistreservation.admin.viewmodel.CreateDokterVM
 import com.example.dentistreservation.admin.viewmodel.CreateJadwalVM
-import com.example.dentistreservation.payment.DokuPayment
 import com.example.dentistreservation.view.dashboard.Home
 import com.example.dentistreservation.view.dashboard.ListReservasi
 import com.example.dentistreservation.view.dashboard.Profile
@@ -24,8 +22,10 @@ import com.example.dentistreservation.view.reservasi.BerhasilMembayar
 import com.example.dentistreservation.view.reservasi.MelakukanPembayaran
 import com.example.dentistreservation.view.reservasi.MemilihDokter
 import com.example.dentistreservation.view.reservasi.MemilihTanggal
+import com.example.dentistreservation.viewmodel.UsersViewModel
 import com.example.dentistreservation.viewmodel.loginregister.LoginViewModel
 import com.example.dentistreservation.viewmodel.loginregister.RegisterViewModel
+import com.example.dentistreservation.viewmodel.reservasi.BerhasilMembayarVM
 import com.example.dentistreservation.viewmodel.reservasi.MelakukanPembayaranVM
 import com.example.dentistreservation.viewmodel.reservasi.MemilihDokterVM
 import com.example.dentistreservation.viewmodel.reservasi.MemilihTanggalVM
@@ -98,7 +98,7 @@ fun Navigation(){
             val keluhan = it.arguments?.getString("keluhan")!!
             MelakukanPembayaran(
                 navController = navController,
-                melakukanPembayaranVM = MelakukanPembayaranVM(),
+                usersViewModel = UsersViewModel(),
                 namaDok = nama,
                 tanggal = tanggal,
                 hari = hari,
@@ -107,8 +107,20 @@ fun Navigation(){
             )
         }
 
-        composable(route = Screen.BerhasilMembayarScreen.route){
-            BerhasilMembayar()
+        composable(
+            route = Screen.BerhasilMembayarScreen.route + "/{orderId}",
+            arguments = listOf(
+                navArgument("orderId"){
+                    type = NavType.StringType
+                }
+            )
+        ){
+            val orderId = it.arguments?.getString("orderId")!!
+            BerhasilMembayar(
+                navController = navController,
+                berhasilMembayarVM = BerhasilMembayarVM(),
+                orderId = orderId
+            )
         }
 
         composable(route = Screen.CreateDokterScreen.route){

@@ -1,4 +1,4 @@
 package com.example.dentistreservation.model
 
-class Pembayaran {
-}
+import com.google.firebase.firestore.IgnoreExtraProperties
+

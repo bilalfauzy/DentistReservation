@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import com.example.dentistreservation.admin.viewmodel.CreateDokterVM
 import com.example.dentistreservation.model.DokterGigi
 import com.example.dentistreservation.model.JadwalDokter
-import com.example.dentistreservation.view.CustomExposedDropdown
-import com.example.dentistreservation.view.MyAppBar
+import com.example.dentistreservation.view.customcomponent.CustomExposedDropdown
+import com.example.dentistreservation.view.customcomponent.MyAppBar
 import java.time.LocalDate
 import java.util.*
 

@@ -1,63 +1,61 @@
 package com.example.dentistreservation.viewmodel
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.dentistreservation.model.DokterGigi
+import com.example.dentistreservation.model.JadwalDokter
 import com.example.dentistreservation.model.Users
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.auth.User
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObjects
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class UsersViewModel : ViewModel() {
     private var db = Firebase.firestore
-    private val userss = "users"
+    val emailUser = FirebaseAuth.getInstance().currentUser?.email
 
-    val createLiveData: MutableLiveData<Boolean> by lazy {
-        MutableLiveData<Boolean>()
-    }
+    private val _userLogin = MutableStateFlow<List<Users>>(emptyList())
+    val userLogin: StateFlow<List<Users>> = _userLogin
 
-    val getListLiveData: MutableLiveData<List<Users>> by lazy {
-        MutableLiveData<List<Users>>()
-    }
 
-    val deleteLiveData: MutableLiveData<Boolean> by lazy {
-        MutableLiveData<Boolean>()
-    }
+    fun getUserLogin(emailUser: String) {
 
-    fun create(users: Users){
-        val docRef = db.collection(userss)
-        docRef.add(users.toMap()).addOnSuccessListener {
-            createLiveData.postValue(true)
-        }.addOnFailureListener {
-            Log.d("create", it.localizedMessage!!)
-            createLiveData.postValue(false)
-        }
-    }
-
-    fun delete(id: String) {
-        val docRef = db.collection(userss)
-        docRef.document(id).delete().addOnSuccessListener {
-            deleteLiveData.postValue(true)
-        }.addOnFailureListener {
-            Log.d("delete", it.localizedMessage!!)
-            deleteLiveData.postValue(false)
-        }
-    }
-
-    fun getList() {
-        val docRef = db.collection(userss)
-        docRef.get().addOnSuccessListener {
-            val listUsers = ArrayList<Users>()
-            for (item in it.documents) {
-                val user = Users()
-                user.nama = item.data!!["nama"] as String?
-                user.email = item.data!!["email"] as String?
-                user.password = item.data!!["password"] as String?
-                listUsers.add(user)
+        if (emailUser.isNotEmpty()) {
+            viewModelScope.launch(Dispatchers.IO) {
+                try {
+                    val snapshot = db.collection("users")
+                        .whereEqualTo("email", emailUser)
+                        .get()
+                        .await()
+                    val user = snapshot.toObjects<Users>()
+                    _userLogin.value = user
+                } catch (e: Exception) {
+                    Log.e("UserLogin", "Gagal mengambil user login", e)
+                }
             }
-            getListLiveData.postValue(listUsers)
-        }.addOnFailureListener {
-            Log.d("get", it.localizedMessage!!)
-            getListLiveData.postValue(null)
+        }
+
+        fun getUser(users: Users) {
+            viewModelScope.launch(Dispatchers.IO) {
+                try {
+                    val snapshot = db.collection("users")
+                        .get().await()
+                    val users = snapshot.toObjects<Users>()
+                } catch (e: Exception) {
+                    Log.e("UserViewModel", "Error getting users", e)
+                }
+
+            }
         }
     }
 }

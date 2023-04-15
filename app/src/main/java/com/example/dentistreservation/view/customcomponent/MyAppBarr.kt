@@ -1,4 +1,4 @@
-package com.example.dentistreservation.view
+package com.example.dentistreservation.view.customcomponent
 
 import androidx.compose.foundation.background
 import androidx.compose.material.Icon

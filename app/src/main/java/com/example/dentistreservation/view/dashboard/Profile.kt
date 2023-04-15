@@ -13,7 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.dentistreservation.view.MyAppBar
+import com.example.dentistreservation.view.customcomponent.MyAppBar
 
 @Composable
 fun Profile(){
