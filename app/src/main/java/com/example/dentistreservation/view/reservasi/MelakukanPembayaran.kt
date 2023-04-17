@@ -10,7 +10,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -20,7 +19,6 @@ import com.example.dentistreservation.payment.MidtransConfig
 import com.example.dentistreservation.routes.Screen
 import com.example.dentistreservation.view.customcomponent.MyAppBar
 import com.example.dentistreservation.viewmodel.UsersViewModel
-import com.example.dentistreservation.viewmodel.reservasi.MelakukanPembayaranVM
 import com.google.firebase.auth.FirebaseAuth
 import com.midtrans.sdk.corekit.callback.TransactionFinishedCallback
 import com.midtrans.sdk.corekit.core.MidtransSDK
@@ -72,7 +70,7 @@ fun MelakukanPembayaran(
         }) // set transaction finish callback (sdk callback)
         .setMerchantBaseUrl(MidtransConfig.SERVER) //set merchant url (required)
         .enableLog(true) // enable sdk log (optional)
-        .setColorTheme(CustomColorTheme("#FFE51255", "#B61548", "#FFE51255")) // set theme. it will replace theme on snap theme on MAP ( optional)
+        .setColorTheme(CustomColorTheme("#FF03A9F4", "#FF03A9F4", "#FF000000")) // set theme. it will replace theme on snap theme on MAP ( optional)
         .setLanguage("id") //`en` for English and `id` for Bahasa
         .buildSDK()
 
@@ -128,7 +126,8 @@ fun MelakukanPembayaran(
                     transactionRequest.itemDetails = itemDetails
                     MidtransSDK.getInstance().transactionRequest = transactionRequest
                     MidtransSDK.getInstance().startPaymentUiFlow(context)
-                    navController.navigate(Screen.BerhasilMembayarScreen.route + "/${orderId}")
+                    navController.navigate(Screen.BerhasilMembayarScreen.route +
+                            "/${orderId}/${namaDok}/${tanggal}/${hari}/${jam}/${keluhan}")
 
                 }
             ) {

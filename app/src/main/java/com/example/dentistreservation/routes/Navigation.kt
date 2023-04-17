@@ -13,21 +13,22 @@ import com.example.dentistreservation.admin.view.CreateDokter
 import com.example.dentistreservation.admin.view.CreateJadwal
 import com.example.dentistreservation.admin.viewmodel.CreateDokterVM
 import com.example.dentistreservation.admin.viewmodel.CreateJadwalVM
+import com.example.dentistreservation.view.dashboard.DetailReservasi
 import com.example.dentistreservation.view.dashboard.Home
 import com.example.dentistreservation.view.dashboard.ListReservasi
 import com.example.dentistreservation.view.dashboard.Profile
+import com.example.dentistreservation.view.dashboard.doktergigi.DetailDokter
+import com.example.dentistreservation.view.dashboard.doktergigi.ListDokter
 import com.example.dentistreservation.view.loginregister.Login
 import com.example.dentistreservation.view.loginregister.Register
 import com.example.dentistreservation.view.reservasi.BerhasilMembayar
 import com.example.dentistreservation.view.reservasi.MelakukanPembayaran
-import com.example.dentistreservation.view.reservasi.MemilihDokter
 import com.example.dentistreservation.view.reservasi.MemilihTanggal
+import com.example.dentistreservation.viewmodel.DokterGigiViewModel
+import com.example.dentistreservation.viewmodel.ReservasiViewModel
 import com.example.dentistreservation.viewmodel.UsersViewModel
 import com.example.dentistreservation.viewmodel.loginregister.LoginViewModel
 import com.example.dentistreservation.viewmodel.loginregister.RegisterViewModel
-import com.example.dentistreservation.viewmodel.reservasi.BerhasilMembayarVM
-import com.example.dentistreservation.viewmodel.reservasi.MelakukanPembayaranVM
-import com.example.dentistreservation.viewmodel.reservasi.MemilihDokterVM
 import com.example.dentistreservation.viewmodel.reservasi.MemilihTanggalVM
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -36,14 +37,21 @@ fun Navigation(){
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = Screen.LoginScreen.route){
-        composable(route = Screen.LoginScreen.route){
-            Login(navController = navController, loginViewModel = LoginViewModel())
+        composable(
+            route = Screen.LoginScreen.route
+        ){
+            Login(
+                navController = navController,
+                loginViewModel = LoginViewModel())
         }
 
         composable(
             route = Screen.HomeScreen.route
         ){
-            Home(navController = navController)
+            Home(
+                navController = navController,
+                usersViewModel = UsersViewModel()
+            )
         }
         
         composable(route = Screen.RegisterScreen.route){
@@ -55,11 +63,10 @@ fun Navigation(){
         }
 
         composable(route = Screen.ListReservasiScreen.route){
-            ListReservasi(navController = navController)
-        }
-
-        composable(route = Screen.MemilihDokterScreen.route){
-            MemilihDokter(navController = navController, memilihDokterVM = MemilihDokterVM())
+            ListReservasi(
+                navController = navController,
+                reservasiViewModel = ReservasiViewModel()
+            )
         }
 
         composable(
@@ -67,8 +74,7 @@ fun Navigation(){
         ){
             MemilihTanggal(
                 navController = navController,
-                memilihTanggalVM = MemilihTanggalVM(),
-                memilihDokterVM = MemilihDokterVM()
+                memilihTanggalVM = MemilihTanggalVM()
             )
         }
 
@@ -108,37 +114,95 @@ fun Navigation(){
         }
 
         composable(
-            route = Screen.BerhasilMembayarScreen.route + "/{orderId}",
+            route = Screen.BerhasilMembayarScreen.route +
+                    "/{orderId}/{nama}/{tanggal}/{hari}/{jam}/{keluhan}",
             arguments = listOf(
                 navArgument("orderId"){
                     type = NavType.StringType
-                }
+                },
+                navArgument("nama"){
+                    type = NavType.StringType
+                },
+                navArgument("tanggal"){
+                    type = NavType.StringType
+                },
+                navArgument("hari"){
+                    type = NavType.StringType
+                },
+                navArgument("jam"){
+                    type = NavType.StringType
+                },
+                navArgument("keluhan"){
+                    type = NavType.StringType
+                },
             )
         ){
             val orderId = it.arguments?.getString("orderId")!!
+            val nama = it.arguments?.getString("nama")!!
+            val tanggal = it.arguments?.getString("tanggal")!!
+            val hari = it.arguments?.getString("hari")!!
+            val jam = it.arguments?.getString("jam")!!
+            val keluhan = it.arguments?.getString("keluhan")!!
             BerhasilMembayar(
                 navController = navController,
-                berhasilMembayarVM = BerhasilMembayarVM(),
-                orderId = orderId
+                reservasiViewModel = ReservasiViewModel(),
+                usersViewModel = UsersViewModel(),
+                orderId = orderId,
+                namaDok = nama,
+                tanggal = tanggal,
+                hari = hari,
+                jam = jam,
+                keluhan = keluhan
             )
         }
 
         composable(route = Screen.CreateDokterScreen.route){
-            CreateDokter(createDokterVM = CreateDokterVM())
+            CreateDokter(
+                navController = navController,
+                createDokterVM = CreateDokterVM()
+            )
         }
 
         composable(
             route = Screen.CreateJadwalScreen.route
         ){
             CreateJadwal(
+                navController = navController,
                 createJadwalVM = CreateJadwalVM(),
-                memilihDokterVM = MemilihDokterVM()
+                dokterGigiViewModel = DokterGigiViewModel()
             )
         }
         
         //admin
         composable(route = Screen.AdminHomeScreen.route){
             AdminHome(navController = navController)
+        }
+
+        composable(
+            route = Screen.ListDokterScreen.route
+        ){
+            ListDokter(
+                navController = navController,
+                dokterGigiViewModel = DokterGigiViewModel()
+            )
+        }
+
+        composable(
+            route = Screen.DetailDokterScreen.route
+        ){
+            DetailDokter(
+                navController = navController,
+                dokterGigiViewModel = DokterGigiViewModel()
+            )
+        }
+
+        composable(
+            route = Screen.DetailReservasiScreen.route
+        ){
+            DetailReservasi(
+                navController = navController,
+                reservasiViewModel = ReservasiViewModel()
+            )
         }
     }
 }

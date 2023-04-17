@@ -11,16 +11,14 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.dentistreservation.R
 import com.example.dentistreservation.routes.Screen
 import com.example.dentistreservation.ui.theme.backColor
-import com.example.dentistreservation.ui.theme.baseColor
-import com.example.dentistreservation.view.customcomponent.CustomExposedDropdown
-import com.example.dentistreservation.view.customcomponent.MyAppBar
-import com.example.dentistreservation.viewmodel.reservasi.MemilihDokterVM
+import com.example.dentistreservation.view.customcomponent.*
 import com.example.dentistreservation.viewmodel.reservasi.MemilihTanggalVM
 import java.time.LocalDate
 import java.util.*
@@ -29,8 +27,7 @@ import java.util.*
 @Composable
 fun MemilihTanggal(
     navController: NavHostController,
-    memilihTanggalVM: MemilihTanggalVM,
-    memilihDokterVM: MemilihDokterVM
+    memilihTanggalVM: MemilihTanggalVM
 ){
 
     val namaDok = remember {
@@ -57,6 +54,7 @@ fun MemilihTanggal(
     }
 
     val context = LocalContext.current
+    var isError = false
 
     Column() {
         MyAppBar(
@@ -71,10 +69,9 @@ fun MemilihTanggal(
             modifier = Modifier
                 .background(backColor)
                 .fillMaxSize()
-                .padding(40.dp)
+                .padding(20.dp)
         ) {
 
-            Text(text = "Pilih tanggal")
             Row(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -102,8 +99,7 @@ fun MemilihTanggal(
                                 )
                                 datepicker.datePicker.minDate = calendar.timeInMillis
                                 datepicker.show()
-                            },
-                            modifier = Modifier.offset(10.dp)
+                            }
                         ) {
                             Icon(imageVector = Icons.Outlined.DateRange, contentDescription = "Pilih tanggal")
                         }
@@ -111,7 +107,7 @@ fun MemilihTanggal(
                 )
             }
 
-            Divider()
+            CustomSpacer()
             CustomExposedDropdown(options = listJam, label = "Pilih waktu", onOptionSelected = {
                 jam.value = it
             }, selectedOption = jam.value)
@@ -123,40 +119,49 @@ fun MemilihTanggal(
                 )
 
                 val listNama = dokterList.map {
-                    it.nama
+                    it.nama.toString()
                 }
                 //pilih daftar dokter
                 if (listNama.isNotEmpty()){
-                    CustomExposedDropdown(options = listNama as List<String>, label = "Pilih dokter", onOptionSelected = {
+                    CustomSpacer()
+                    CustomExposedDropdown(options = listNama, label = "Pilih dokter", onOptionSelected = {
                         namaDok.value = it
                     }, selectedOption = namaDok.value)
                 }else{
+                    CustomSpacer()
                     Text(text = "Tidak ada dokter tersedia")
                 }
             }
 
-            Divider()
+            CustomSpacer()
             //isi keluhan
-            OutlinedTextField(
+            CustomTextField(
                 value = keluhan.value,
                 onValueChange = {
                     keluhan.value = it
+                    isError = it.isEmpty()
                 },
-                label = {
-                    Text("Isi keluhan")
+                label = "Keluhan",
+                leadingIcon = {
+                    Icon(painter = painterResource(
+                        id = R.drawable.ic_email),
+                        contentDescription = "Email",
+                        tint = MaterialTheme.colors.primary
+                    )
                 },
-                modifier = Modifier.fillMaxWidth()
+                isError = isError
             )
 
-            Divider()
-            Button(
+            CustomSpacer()
+
+            MyButton(
                 onClick = {
                     navController.navigate(Screen.MelakukanPembayaranScreen.route+
                             "/${namaDok.value}/${selectedDate.value}/${selectedDate.value.dayOfWeek}/${jam.value}/${keluhan.value}")
-                }
-            ) {
-                Text(text = "Pilih")
-            }
+                },
+                text = "OK"
+            )
+
         }
     }
 }

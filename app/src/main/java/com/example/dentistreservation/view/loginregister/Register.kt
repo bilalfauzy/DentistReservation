@@ -8,25 +8,18 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.dentistreservation.R
 import com.example.dentistreservation.routes.Screen
-import com.example.dentistreservation.view.customcomponent.CustomCard
-import com.example.dentistreservation.view.customcomponent.CustomExposedDropdown
-import com.example.dentistreservation.view.customcomponent.CustomTextField
-import com.example.dentistreservation.view.customcomponent.MyButton
+import com.example.dentistreservation.view.customcomponent.*
 import com.example.dentistreservation.viewmodel.loginregister.RegisterViewModel
 
 @Composable
@@ -43,12 +36,12 @@ fun Register(
         "Perempuan",
     )
 
-    Column{
+    Column(){
 
         TopAppBar(modifier = Modifier
             .background(MaterialTheme.colors.primary),
             title = {
-                Text(text = "Login")
+                Text(text = "Register")
             }
         )
 
@@ -119,7 +112,7 @@ fun Register(
                         onValueChange = {
                             registerViewModel.onNomorChange(it)
                         },
-                        label = "Masukkan nomor telepon/Whatsapp",
+                        label = "Nomor telepon/Whatsapp",
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number
                         ),
@@ -204,8 +197,10 @@ fun Register(
                         )
                     }
 
+                    CustomSpacer()
                     Button(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
                             .height(50.dp)
                             .clip(RoundedCornerShape(10.dp)),
                         onClick = {
@@ -222,8 +217,9 @@ fun Register(
                             Text(text = "REGISTER")
                         }
                     }
-
+                    CustomSpacer()
                     Text(text = "Sudah mempunyai akun?")
+                    CustomSpacer()
                     MyButton(
                         onClick = {
                             navController.navigate(Screen.LoginScreen.route)

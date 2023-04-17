@@ -1,6 +1,5 @@
 package com.example.dentistreservation.model
 
-import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.IgnoreExtraProperties
 
 
@@ -13,15 +12,4 @@ data class Users(
     var noWa: String? = null,
     var email: String? = null,
     var password: String? = null
-){
-    @Exclude
-    fun toMap():Map<String, Any?>{
-        return mapOf(
-            "nama" to nama,
-            "umur" to umur,
-            "gender" to gender,
-            "email" to email,
-            "password" to password
-        )
-    }
-}
+)

@@ -25,13 +25,6 @@ import kotlinx.coroutines.tasks.await
 class MemilihTanggalVM : ViewModel(){
     private val db = Firebase.firestore
 
-    private val _jadwalList = MutableStateFlow<List<JadwalDokter>>(emptyList())
-    val jadwalList: StateFlow<List<JadwalDokter>> = _jadwalList
-
-    private val _dokters = MutableStateFlow<List<DokterGigi>>(emptyList())
-    val dokters: StateFlow<List<DokterGigi>> get() = _dokters
-
-
     fun dokterByDate(date: String, jam: String): Flow<List<DokterGigi>>{
 
         return callbackFlow {
@@ -74,23 +67,5 @@ class MemilihTanggalVM : ViewModel(){
                 }
             awaitClose()
         }
-
     }
-
-
-    init {
-        viewModelScope.launch {
-            try {
-                val snapshot = db.collection("jadwal")
-                    .get()
-                    .await()
-
-                val jadwalList = snapshot.toObjects<JadwalDokter>()
-                _jadwalList.value = jadwalList
-            } catch (e: Exception) {
-                Log.e("DokterViewModel", "Error getting dokter", e)
-            }
-        }
-    }
-
 }

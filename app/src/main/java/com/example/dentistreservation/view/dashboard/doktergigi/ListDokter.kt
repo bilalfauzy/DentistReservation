@@ -1,4 +1,4 @@
-package com.example.dentistreservation.view.dashboard
+package com.example.dentistreservation.view.dashboard.doktergigi
 
 import android.widget.Toast
 import androidx.compose.foundation.clickable
@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -19,97 +18,86 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.dentistreservation.model.Reservasi
+import com.example.dentistreservation.model.DokterGigi
 import com.example.dentistreservation.routes.Screen
-import com.example.dentistreservation.view.customcomponent.CustomCard
 import com.example.dentistreservation.view.customcomponent.CustomDivider
 import com.example.dentistreservation.view.customcomponent.MyAppBar
-import com.example.dentistreservation.viewmodel.ReservasiViewModel
-import com.example.dentistreservation.viewmodel.UsersViewModel
+import com.example.dentistreservation.viewmodel.DokterGigiViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
-fun ListReservasi(
+fun ListDokter(
     navController: NavHostController,
-    reservasiViewModel: ReservasiViewModel
+    dokterGigiViewModel: DokterGigiViewModel
 ){
     val emailLogin = FirebaseAuth.getInstance().currentUser?.email
-
-    reservasiViewModel.getReservasi(emailLogin!!)
-    reservasiViewModel.getAllReservasi()
-    val reservasiList by reservasiViewModel.reservasiList.collectAsState(emptyList())
-    val allReservasi by reservasiViewModel.allRes.collectAsState(emptyList())
-
+    val listDokter by dokterGigiViewModel.dokterList.collectAsState(emptyList())
     val context = LocalContext.current
 
-    if (emailLogin.isNotEmpty() && emailLogin.equals("admin@gmail.com")){
+    if (emailLogin.equals("admin@gmail.com")){
         Column() {
             MyAppBar(
-                title = "History reservasi",
+                title = "Dokter gigi",
                 navigationIcon = Icons.Filled.ArrowBack,
                 onNavigationClick = {
                     navController.navigate(Screen.AdminHomeScreen.route)
                 }
             )
 
-            MyListReservasi(
-                allReservasi,
+            MyListDokter(
+                listDokter,
                 onItemClick = {
-                    navController.navigate(Screen.DetailReservasiScreen.route)
+                    navController.navigate(Screen.DetailDokterScreen.route)
                     Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show()
                 }
             )
         }
-    }else {
+    }else{
         Column() {
             MyAppBar(
-                title = "History reservasi",
+                title = "Dokter gigi",
                 navigationIcon = Icons.Filled.ArrowBack,
                 onNavigationClick = {
                     navController.navigate(Screen.HomeScreen.route)
                 }
             )
-            MyListReservasi(
-                reservasiList,
+
+            MyListDokter(
+                listDokter,
                 onItemClick = {
-                    navController.navigate(Screen.DetailReservasiScreen.route)
+                    navController.navigate(Screen.DetailDokterScreen.route)
                     Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show()
                 }
             )
         }
     }
-
 }
 
 @Composable
-fun MyListReservasi(
-    items: List<Reservasi>,
-    onItemClick: (Reservasi) -> Unit
-) {
+fun MyListDokter(
+    items: List<DokterGigi>,
+    onItemClick: (DokterGigi) -> Unit
+){
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 20.dp, bottom = 20.dp)
     ) {
-        items(items) { reservasi ->
+        items(items) { dokter ->
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable(onClick = { onItemClick(reservasi) }),
+                    .clickable(onClick = { onItemClick(dokter) }),
                 elevation = 2.dp
             ) {
                 Column(
                     modifier = Modifier.padding(10.dp)
                 ){
-                    Text(text = "Nama  : ${reservasi.namaUser}")
-                    Text(text = "Dokter : ${reservasi.namaDokter}")
-                    Text(text = "Biaya : ${reservasi.biaya}")
-                    Text(text = "Pembayaran : ${reservasi.jenisPembayaran}")
-                    Text(text = "Status : ${reservasi.statusPembayaran}")
+                    Text(text = "ID dokter  : ${dokter.id}")
+                    Text(text = "Nama : ${dokter.nama}")
+                    Text(text = "Spesialis : ${dokter.spesialis}")
                 }
-
             }
             CustomDivider()
         }

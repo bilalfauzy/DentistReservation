@@ -5,38 +5,65 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Button
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.navOptions
+import com.example.dentistreservation.model.Reservasi
 import com.example.dentistreservation.payment.model.PaymentResponse
 import com.example.dentistreservation.routes.Screen
-import com.example.dentistreservation.view.customcomponent.MyAppBar
 import com.example.dentistreservation.view.customcomponent.MyButton
-import com.example.dentistreservation.viewmodel.reservasi.BerhasilMembayarVM
+import com.example.dentistreservation.viewmodel.ReservasiViewModel
+import com.example.dentistreservation.viewmodel.UsersViewModel
+import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.GsonBuilder
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
+import java.util.UUID
 
 @Composable
 fun BerhasilMembayar(
     navController: NavHostController,
-    berhasilMembayarVM: BerhasilMembayarVM,
-    orderId: String
+    reservasiViewModel: ReservasiViewModel,
+    usersViewModel: UsersViewModel,
+    orderId: String,
+    namaDok: String,
+    tanggal: String,
+    hari: String,
+    jam: String,
+    keluhan: String
 ){
+    val emailLogin = FirebaseAuth.getInstance().currentUser?.email
+    usersViewModel.getUserLogin(emailLogin!!)
+    val userLogin by usersViewModel.userLogin.collectAsState(emptyList())
+
+    val idUserList = userLogin.map {
+        it.idUser.toString()
+    }
+    val namaList = userLogin.map {
+        it.nama.toString()
+    }
+
+    val emailList = userLogin.map {
+        it.email.toString()
+    }
+
+    val noWaList = userLogin.map {
+        it.noWa.toString()
+    }
+
+    val idUser = idUserList.joinToString()
+    val nama = namaList.joinToString()
+    val email = emailList.joinToString()
+    val noWa = noWaList.joinToString()
+
+    val idRes = UUID.randomUUID().toString()
+
     val idTransaksi = remember {
         mutableStateOf("")
     }
@@ -85,12 +112,31 @@ fun BerhasilMembayar(
                 },
                 text = "CETAK FAKTUR"
             )
-            MyButton(
-                onClick = {
-                    navController.navigate(Screen.HomeScreen.route)
-                },
-                text = "OK"
-            )
+            if (status.value.isNotEmpty()){
+                MyButton(
+                    onClick = {
+                        val reservasi = Reservasi(
+                            idRes = idRes,
+                            namaUser = nama,
+                            emailUser = email,
+                            noWa = noWa,
+                            namaDokter = namaDok,
+                            hariRes = hari,
+                            tanggalRes = tanggal,
+                            jamRes = jam,
+                            keluhan = keluhan,
+                            biaya = 50000.00,
+                            jenisPembayaran = jenisPembayaran.value,
+                            statusPembayaran = status.value,
+                            waktuTransaksi = waktuTransaksi.value,
+                            expire = expire.value
+                        )
+                        reservasiViewModel.createReservasi(idUser, reservasi)
+                        navController.navigate(Screen.HomeScreen.route)
+                    },
+                    text = "OK"
+                )
+            }
         }
     }
 

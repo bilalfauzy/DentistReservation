@@ -4,10 +4,11 @@ import android.app.DatePickerDialog
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -17,24 +18,32 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import com.example.dentistreservation.R
 import com.example.dentistreservation.admin.viewmodel.CreateDokterVM
 import com.example.dentistreservation.model.DokterGigi
 import com.example.dentistreservation.model.JadwalDokter
-import com.example.dentistreservation.view.customcomponent.CustomExposedDropdown
-import com.example.dentistreservation.view.customcomponent.MyAppBar
+import com.example.dentistreservation.routes.Screen
+import com.example.dentistreservation.ui.theme.backColor
+import com.example.dentistreservation.view.customcomponent.*
 import java.time.LocalDate
 import java.util.*
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun CreateDokter(createDokterVM: CreateDokterVM){
+fun CreateDokter(
+    navController: NavHostController,
+    createDokterVM: CreateDokterVM
+){
     val idDok = remember {
         mutableStateOf("")
     }
     val nama = remember {
         mutableStateOf("")
     }
+
     val gender = remember {
         mutableStateOf<String?>(null)
     }
@@ -88,83 +97,124 @@ fun CreateDokter(createDokterVM: CreateDokterVM){
 
     val context = LocalContext.current
 
-    Column {
+    var isError = false
+
+    val scrollState = rememberScrollState()
+
+    Column(
+        modifier = Modifier.scrollable(scrollState, Orientation.Vertical)
+    ){
         MyAppBar(
             title = "Menambah dokter",
             navigationIcon = Icons.Filled.ArrowBack,
             onNavigationClick = {
-
+                navController.navigate(Screen.AdminHomeScreen.route)
             }
         )
 
-        OutlinedTextField(
-            value = idDok.value,
-            onValueChange = {
-                idDok.value = it
-            },
-            label = {
-                Text("ID dokter")
-            },
-            modifier = Modifier.fillMaxWidth()
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(20.dp)
+                .background(backColor)
+        ) {
 
-        //data dokter
-        OutlinedTextField(
-            value = nama.value,
-            onValueChange = {
-                nama.value = it
-            },
-            label = {
-                Text("Nama dokter")
-            },
-            modifier = Modifier.fillMaxWidth()
-        )
+            //id dokter
+            CustomTextField(
+                value = idDok.value,
+                onValueChange = {
+                    idDok.value = it
+                    isError = it.isEmpty()
+                },
+                label = "ID dokter",
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_email),
+                        contentDescription = "ID",
+                        tint = MaterialTheme.colors.primary
+                    )
+                },
+                isError = isError
+            )
 
-        //gender dokter
-        CustomExposedDropdown(options = listGender, label = "Pilih gender", onOptionSelected = {
-            gender.value = it
-        }, selectedOption = gender.value)
+            //data dokter
+            CustomTextField(
+                value = nama.value,
+                onValueChange = {
+                    nama.value = it
+                    isError = it.isEmpty()
+                },
+                label = "Nama dokter",
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_email),
+                        contentDescription = "ID",
+                        tint = MaterialTheme.colors.primary
+                    )
+                },
+                isError = isError
+            )
 
-        OutlinedTextField(
-            value = spesialis.value,
-            onValueChange = {
-                spesialis.value = it
-            },
-            label = {
-                Text("Spesialis")
-            },
-            modifier = Modifier.fillMaxWidth()
-        )
+            //gender dokter
+            CustomExposedDropdown(options = listGender, label = "Pilih gender", onOptionSelected = {
+                gender.value = it
+            }, selectedOption = gender.value)
 
-        OutlinedTextField(
-            value = umur.value,
-            onValueChange = {
-                umur.value = it
-            },
-            label = {
-                Text("Umur")
-            },
-            modifier = Modifier.fillMaxWidth()
-        )
+            //spesialis dokter
+            CustomTextField(
+                value = spesialis.value,
+                onValueChange = {
+                    spesialis.value = it
+                    isError = it.isEmpty()
+                },
+                label = "Spesialis",
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_email),
+                        contentDescription = "ID",
+                        tint = MaterialTheme.colors.primary
+                    )
+                },
+                isError = isError
+            )
 
-        if (
-            idDok.value.isNotEmpty()
-            && nama.value.isNotEmpty()
-            && gender.value!!.isNotEmpty()
-            && spesialis.value.isNotEmpty()
-            && umur.value.isNotEmpty()
-        ){
+            //umur dokter
+            CustomTextField(
+                value = umur.value,
+                onValueChange = {
+                    umur.value = it
+                    isError = it.isEmpty()
+                },
+                label = "Umur",
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_email),
+                        contentDescription = "ID",
+                        tint = MaterialTheme.colors.primary
+                    )
+                },
+                isError = isError
+            )
+
             //id jadwal
-            OutlinedTextField(
+            CustomTextField(
                 value = idJadwal.value,
                 onValueChange = {
                     idJadwal.value = it
+                    isError = it.isEmpty()
                 },
-                label = {
-                    Text("ID Jadwal")
+                label = "ID jadwal",
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_email),
+                        contentDescription = "ID",
+                        tint = MaterialTheme.colors.primary
+                    )
                 },
-                modifier = Modifier.fillMaxWidth()
+                isError = isError
             )
+
+            CustomSpacer()
             //tanggal
             Row(
                 modifier = Modifier.fillMaxWidth()
@@ -173,7 +223,7 @@ fun CreateDokter(createDokterVM: CreateDokterVM){
                     modifier = Modifier.weight(1f),
                     value = selectedDate.value.toString(),
                     onValueChange = {
-                        selectedDate.value  = LocalDate.parse(it)
+                        selectedDate.value = LocalDate.parse(it)
                     },
                     readOnly = true,
                     trailingIcon = {
@@ -187,16 +237,19 @@ fun CreateDokter(createDokterVM: CreateDokterVM){
                                 val datepicker = DatePickerDialog(
                                     context,
                                     { _, year, month, dayOfMonth ->
-                                        selectedDate.value = LocalDate.of(year, month +1, dayOfMonth)
+                                        selectedDate.value =
+                                            LocalDate.of(year, month + 1, dayOfMonth)
                                     },
                                     year, month, day
                                 )
                                 datepicker.datePicker.minDate = calendar.timeInMillis
                                 datepicker.show()
-                            },
-                            modifier = Modifier.offset(10.dp)
+                            }
                         ) {
-                            Icon(imageVector = Icons.Outlined.DateRange, contentDescription = "Pilih tanggal")
+                            Icon(
+                                imageVector = Icons.Outlined.DateRange,
+                                contentDescription = "Pilih tanggal"
+                            )
                         }
                     }
                 )
@@ -218,31 +271,33 @@ fun CreateDokter(createDokterVM: CreateDokterVM){
                 status.value = it
             }, selectedOption = status.value)
 
-        }
+            CustomSpacer()
+            CustomSpacer()
+            CustomSpacer()
+            CustomSpacer()
+            MyButton(
+                onClick = {
+                    val dokterGigi = DokterGigi(
+                        id = idDok.value,
+                        nama = nama.value,
+                        gender = gender.value,
+                        spesialis = spesialis.value,
+                        umur = umur.value
+                    )
 
-        Button(
-            onClick = {
-                val dokterGigi = DokterGigi(
-                    id = idDok.value,
-                    nama = nama.value,
-                    gender = gender.value,
-                    spesialis = spesialis.value,
-                    umur = umur.value
-                )
+                    val jadwalDokter = JadwalDokter(
+                        id = idJadwal.value,
+                        tanggal = selectedDate.value.toString(),
+                        hari = hari.value,
+                        jam = jam.value,
+                        status = status.value
+                    )
 
-                val jadwalDokter = JadwalDokter(
-                    id = idJadwal.value,
-                    tanggal = selectedDate.value.toString(),
-                    hari = hari.value,
-                    jam = jam.value,
-                    status = status.value
-                )
-
-                createDokterVM.createDokter(dokterGigi, jadwalDokter)
-                Toast.makeText(context, "Berhasil menambahkan data", Toast.LENGTH_SHORT).show()
-            }
-        ) {
-            Text(text = "Simpan")
+                    createDokterVM.createDokter(dokterGigi, jadwalDokter)
+                    Toast.makeText(context, "Berhasil menambahkan data", Toast.LENGTH_SHORT).show()
+                },
+                text = "SIMPAN"
+            )
         }
     }
 }

@@ -51,6 +51,22 @@ fun AdminHome(
             ) {
                 Text(text = "Tambah jadwal")
             }
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    navController.navigate(Screen.ListReservasiScreen.route)
+                }
+            ) {
+                Text(text = "List reservasi")
+            }
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    navController.navigate(Screen.ListDokterScreen.route)
+                }
+            ) {
+                Text(text = "List dokter")
+            }
         }
     }
 }

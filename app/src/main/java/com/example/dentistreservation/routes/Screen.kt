@@ -6,7 +6,6 @@ sealed class Screen(val route: String){
     object HomeScreen : Screen("home_screen")
     object ProfileScreen : Screen("profile_screen")
     object ListReservasiScreen : Screen("listreservasi_screen")
-    object MemilihDokterScreen : Screen("memilihdokter_screen")
     object MemilihTanggalScreen : Screen("memilihtanggal_screen")
     object MelakukanPembayaranScreen : Screen("melakukanpembayaran_screen")
     object BerhasilMembayarScreen : Screen("berhasilmembayar_screen")
@@ -15,5 +14,9 @@ sealed class Screen(val route: String){
 
     object AdminHomeScreen : Screen("adminhome_screen")
 
+    object ListDokterScreen: Screen("listdokter_screen")
+
+    object DetailDokterScreen: Screen("detaildokter_screen")
+    object DetailReservasiScreen: Screen("detailreservasi_screen")
 
 }

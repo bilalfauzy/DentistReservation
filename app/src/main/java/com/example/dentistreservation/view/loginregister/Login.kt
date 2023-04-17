@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.dentistreservation.R
 import com.example.dentistreservation.routes.Screen
+import com.example.dentistreservation.ui.theme.backColor
 import com.example.dentistreservation.ui.theme.baseColor
 import com.example.dentistreservation.view.customcomponent.CustomCard
 import com.example.dentistreservation.view.customcomponent.CustomSpacer
@@ -56,7 +57,8 @@ fun Login(
         )
 
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize()
+                .background(backColor),
             contentAlignment = Alignment.Center
         ){
             CustomCard(
@@ -132,7 +134,7 @@ fun Login(
                                   Toast.makeText(context, "Form tidak boleh kosong!", Toast.LENGTH_SHORT).show()
                               }
                         },
-                        text = "Login"
+                        text = "LOGIN"
                     )
                     CustomSpacer()
                     Text(text = "Belum mempunyai akun?")
@@ -141,7 +143,7 @@ fun Login(
                         onClick = {
                               navController.navigate(Screen.RegisterScreen.route)
                         },
-                        text = "Register"
+                        text = "REGISTER"
                     )
 
                 }

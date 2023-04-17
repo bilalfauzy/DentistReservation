@@ -14,6 +14,8 @@ import kotlinx.coroutines.tasks.await
 
 class CreateJadwalVM : ViewModel() {
     private val db = Firebase.firestore
+
+    //create update
     fun createJadwal(idDokter: String, jadwalDokter: JadwalDokter){
         viewModelScope.launch(Dispatchers.IO){
             db.collection("dokter")
@@ -21,6 +23,17 @@ class CreateJadwalVM : ViewModel() {
                 .collection("jadwal")
                 .document(jadwalDokter.id!!)
                 .set(jadwalDokter)
+                .await()
+        }
+    }
+
+    fun deleteJadwal(idDokter: String, jadwalDokter: JadwalDokter){
+        viewModelScope.launch(Dispatchers.IO){
+            db.collection("dokter")
+                .document(idDokter)
+                .collection("jadwal")
+                .document(jadwalDokter.id!!)
+                .delete()
                 .await()
         }
     }

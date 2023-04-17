@@ -22,11 +22,9 @@ import kotlinx.coroutines.tasks.await
 
 class UsersViewModel : ViewModel() {
     private var db = Firebase.firestore
-    val emailUser = FirebaseAuth.getInstance().currentUser?.email
 
     private val _userLogin = MutableStateFlow<List<Users>>(emptyList())
     val userLogin: StateFlow<List<Users>> = _userLogin
-
 
     fun getUserLogin(emailUser: String) {
 

@@ -27,4 +27,13 @@ class CreateDokterVM : ViewModel(){
                 .await()
         }
     }
+
+    fun deleteDokter(dokterGigi: DokterGigi){
+        viewModelScope.launch(Dispatchers.IO){
+            db.collection("dokter")
+                .document(dokterGigi.id!!)
+                .delete()
+                .await()
+        }
+    }
 }
